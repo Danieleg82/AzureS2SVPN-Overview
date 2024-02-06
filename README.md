@@ -349,7 +349,8 @@ Similar alerts, based on different metrics, can be used instead to assess connec
 Can I use stateful devices to terminate IPSEC links with Azure VNG?
 Once more, the answer is different depending on the configuration we consider…
 
-**|Scenario | Is stateful remote VPN endpoint supported? |**
+| **Scenario** | **Is stateful remote VPN endpoint supported?** |
+| ------------- | ------------- |
 | A/P VNG | YES |
 | A/A VNG + single link – Static routing | YES |
 | A/A VNG + single link - BGP |	Unsupported scenario (see above) |
