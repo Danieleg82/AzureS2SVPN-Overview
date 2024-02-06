@@ -85,7 +85,9 @@ The instance which is considered active attempts connectivity to the remote endp
 In case of BGP connectivity, **a single and unique BGP IP is configured on the VNG**, which is associated again with the instance considered active.
 
 #### Failover events:
- 
+
+![](Pics/3%20-%20AP%20failover.png)
+
 In case of failure or planned maintenance events, the VM instance which was standing by takes over from its peer, and becomes the new Active instance.
 The Gateway public IP is moved to the new active instance, so the VM is able to build IPSEC connectivity with remote peer.
 During planned maintenance events, a process of Security Associations migration takes place between the instance which is going to go standby and the new active instance: this way there will be no need to rebuild IPSEC tunnels, the move from one instance to the other will be transparent from the point of view of the remote endpoint.
@@ -102,8 +104,10 @@ In case of unplanned failure, even with BGP, the rebuild of IPSEC tunnels may ta
 
 
 ### Azure VPN S2S in Active-Active mode:
+
+![](Pics/4%20-%20GUI%20enable%20A-A.png)
  
- 
+![](Pics/5%20-%20A-A%20generic.png)
 
 Characteristics
 When working in Active/Active mode, both the VM instances of a VNG are active, hence attempting to build IPSEC connectivity with the remote endpoints, again according with the Connections configured on the GW.
@@ -118,10 +122,10 @@ Remote endpoints are supposed to create 2 links:
 We can here split between different scenarios.
 
 
-
-
 2.1	Single link enabled, Static routing
 
+
+![](/Pics/6%20-%20AA%20single%20link.png)
  
 In this scenario customer decides to connect a single remote endpoint to a single VM instance of the VNG, in a scenario of Static routing
 You may ask: WHY?
@@ -130,12 +134,9 @@ Some other times, we simply forget about configuring a second tunnel on our loca
 
 
 
-
-
-
-
-
 Failover events:
+
+![](/Pics/7%20-%20AA%20single%20link%20failover.png)
  
 In case of failure, the “surviving” instance will start leveraging the Public IP of the “dead” instance to build IPSEC.
 The IPSEC will come up.
@@ -152,6 +153,7 @@ As per Active/Standby scenario.
 
 2.2	Single link enabled with BGP: DO NOT DO THIS!!
 
+![](/Pics/8%20-%20AA%20single%20link%20BGP.png)
  
 This represents the most dangerous condition for the reliability of your VPN connectivity with a VNG.
 The scenario is similar to previous one, with the difference that we enable BGP on top of the connection.
@@ -161,13 +163,9 @@ You will soon notice that your VPN link will suffer of long downtimes, occurring
 Let’s see in detail why you should never do this.
 
 
-
-
-
-
-
 Failover events:
 
+![](/Pics/9%20-%20AA%20single%20link%20BGP%20failover.png)
  
 During failover, the connectivity of to the “surviving” instance is destined to fail.
 For basically 2 reasons:
@@ -180,14 +178,17 @@ None
 
 Cons
 Totally unreliable connectivity.
+
 2.3	Double link with static routing
 
- 
+![](/Pics/10%20-%20AA%20double%20link%20static.png)
 
 In this scenario we connect our local VPN terminator with both instances of the VNG, but we use Static routing (no BGP).
 This scenario is allowing to reach potentially doubled throughput performances in normal conditions and avoiding complexity of BGP setup, but there are some things to keep in consideration for failover events.
 
 Failover events:
+
+![](/Pics/11%20-%20AA%20double%20link%20static%20failover.png)
  
 In case of a link/gateway failure on Azure side, Azure will reprogram routes to automatically point to the healthy link even if the routing is static, but the same may not happen on the other side.
 The remote device has 2 static routes in its route table.
@@ -201,10 +202,9 @@ Cons
 Remote VPN terminator could experience issues in case of failure of one of the IPSEC links to Azure, due to usage of static routes.
 
 
-
-
-
 2.4	Double link with BGP
+
+![](/Pics/12%20-%20AA%20double%20link%20BGP.png)
  
 This represents the ideal and best connectivity model for an active-active VNG.
 The Gateway is connected to remote side through 2x IPSEC links, and BGP is enabled on both links in order to unblock potential double capacity or to allow to use one link as primary and the other as secondary in case of failures.
@@ -212,6 +212,8 @@ Every GW instance is programmed with its own BGP-IP.
 Remote VPN device must be configured properly in order to bind the peering of a specific remote BGP peer IP with the correct IPSEC interface as nexthop.
 
 Failover events:
+
+![](/Pics/13%20-%20AA%20double%20link%20BGP%20failover.png)
  
 In case of failure of one Gateway instance, the IPSEC tunnel with the surviving instance is already in place.
 No public IP swapping is performed.
@@ -225,12 +227,9 @@ Cons
 None, a part for the complexity of double IPSEC link and BGP peering setup.
 
 
-
-
-
 2.5	Double remote endpoint – 4x links – Static/BGP
 
- 
+![](/Pics/14%20-%20AA%20double%20link%202x%20remote.png)
 
 The scenarios we described so far do not take into account possible failure of remote VPN endpoint.
 With this last option – Active/Active instances on both ends – we reach the maximum level of reliability for our VPN solution to Azure.
@@ -252,6 +251,7 @@ From the point of view of Onpremise side, of course you will have to configure 4
 
 Failover events:
 
+![](/Pics/15%20-%20AA%20double%20link%202x%20remote%20failover.png)
  
 In case of failure of one Gateway instance, the IPSEC tunnels with the surviving instance are already in place.
 No public IP swapping is performed.
@@ -273,14 +273,14 @@ Often, users are confused about the capacity values for Azure VNG that we provid
 It makes sense to try clarifying…
 The throughput values provided in our documentation (https://learn.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-about-vpngateways#gwsku) are defined as aggregate throughput:
 
- 
+![](/Pics/16%20-%20Aggregate%20table.png)
 
 The definition of aggregate throughput is the maximum throughput achievable by the VNG instance as sum of all the connections configured, including P2S traffic.
 This simply means that, if you select a VNG SKU with 5 or 10Gbps aggregate throughput, this doesn’t mean you will be able to reach such capacity over a single IPSEC link.
 Some benchmark tests’ results regarding the performances of single links depending on the VNG’s SKU is available here:
 https://learn.microsoft.com/en-us/azure/vpn-gateway/about-gateway-skus#performance
 
- 
+![](/Pics/17%20-%20pertunnel%20table.png)
 
 As you can see, the performances of the single link are strictly correlated with the SKU type, but also with the kind of encryption algorithms used for the IPSEC tunnel, GCMAES256 being the one generally speaking offering best performances.
 The maximum throughput you could expect today on a single IPSEC link of Azure VNG – using GCMAES256 – is around 2.3Gbps, with a GW offering a maximum of 10Gbps aggregate capacity.
@@ -299,7 +299,8 @@ What I usually recommend in order to assess health status of a VNG from the poin
 Last but not least, it’s fundamental to implement a periodical assessments of the amount of VMs deployed in your environment: in fact, every VNG can support a limited number of VMs deployed in the HUB, or in spoke VNETs connected to the HUB and leveraging GW-transit.
 The max amount of backend VMs is again reported here:
 https://learn.microsoft.com/en-us/azure/vpn-gateway/about-gateway-skus#benchmark
- 
+
+![](/Pics/18%20-%20SupportedVMs.png)
 
 If an excessive amount of VMs is polling routing info from the VNG, the VNG can suffer severe performance issues, resulting in recurrent failovers, connectivity flaps, drops, etc… 
 Similar alerts, based on different metrics, can be used instead to assess connectivity, i.e.:
@@ -333,38 +334,28 @@ In these cases we analyze what happens in a scenarios of:
 TRAFFIC GENERATED FROM ONPREM TO AZURE :
 
 
-
-
-
-
-
-
-
-
 GO PATH:
  
-
-
-
-
-
-
-
-
-
-
+![](/Pics/19%20-%20symmetry1.png)
 
 RETURN PATH:
+
+![](/Pics/20%20-%20symmetry2.png)
  
 When the traffic is originated from Onpremise, the return traffic generated by the VM in Azure does not grant any symmetry.
 If packets have landed on IN0 in one direction (Onprem  Azure) it may be forwarded to IN1 in the opposite direction (Azure  Onprem).
 Any further packet relevant to such flow/connection, from Azure VM to Onprem, will always be redirected through the same VNG instance, which – again – may not be the same where traffic landed initially.
 
 TRAFFIC GENERATED FROM AZURE TO ONPREM :
+
 GO PATH:
+
+![](/Pics/21%20-%20simmetry3.png)
  
 RETURN PATH:
- 
+
+![](/Pics/22%20-%20simmetry4.png)
+
 One flow generated from Azure side, will always land on the same VNG instance, and that instance will always encapsulate it through the same logical tunnel.
 The return path will depend on the logics applied the remote endpoint.
 If the device routes back according with 5-tuple mapping, and ignoring the source link through which the ingress traffic has been received, the asymmetry could still happen
