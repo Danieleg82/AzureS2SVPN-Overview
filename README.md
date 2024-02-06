@@ -28,44 +28,63 @@ In this article I want to show you some aspects of the VNG which typically still
 
 ## INTRO OF AZURE VIRTUAL NETWORK GATEWAY
 
-Every VNG in Azure is a logical object composed by 2 underlying instances.
-Every instance (we can call them IN0 and IN1) is actually a Virtual Machine, injected in customer’s VNET.
+Every VNG in Azure is a logical object composed by 2 underlying **instances**.
+
+Every instance (we can call them **IN0** and **IN1**) is actually a Virtual Machine, injected in customer’s VNET.
 The configurations of these IPSEC terminators is managed through 2 specific logical objects:
-1.	Local Network Gateways (LNG): these are a logical representations of the remote terminators we want to connect to our VNG. Every LNG contains info about:
-a.	Remote gateway’s public IP or FQDN
-b.	Remote network’s IP ranges (if static routing)
-c.	Remote gateway’s BGP endpoint (if dynamic routing) & ASN
-2.	Connections: these are logical objects used to link a VNG to a LNG. Connections are programmed with:
-a.	The shared key used for the IPSEC encryption
-b.	The IKE protocol to use
-c.	The decision of using BGP or not
-d.	Custom IPSEC policies to be applied (if any)
-e.	Other specific IPSEC parameters
-When we link a VNG to a LNG through a Connection, the Azure control plane programs the 2 VMs “behind” our VNG with the provided parameters, so that they start attempting IPSEC connectivity to the remote side.
-You can configure VNG in Active-Standby or Active-Active modes by accessing the “Configuration” section of the gateway itself:
+1.	**Local Network Gateways (LNG)**: these are a logical representations of the remote terminators we want to connect to our VNG. Every LNG contains info about:
+
+-	Remote gateway’s public IP or FQDN
+-	Remote network’s IP ranges (if static routing)
+-	Remote gateway’s BGP endpoint (if dynamic routing) & ASN
+
+2.	**Connections**: these are logical objects used to link a VNG to a LNG. Connections are programmed with:
+-	The shared key used for the IPSEC encryption
+-	The IKE protocol to use
+-	The decision of using BGP or not
+-	Custom IPSEC policies to be applied (if any)
+-	Other specific IPSEC parameters
+  
+When we link a VNG to a _LNG_ through a _Connection_, the Azure control plane programs the 2 VMs “behind” our VNG with the provided parameters, so that they start attempting IPSEC connectivity to the remote side.
+You can configure VNG in **Active-Standby** (A/S) or **Active-Active** (A/A) modes by accessing the “Configuration” section of the gateway itself:
+
+ ![](Pics/1%20-%20GUI.png)
  
 
 …or leveraging Powershell/CLI scripting:
-https://learn.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-activeactive-rm-powershell#part-1---create-and-configure-active-active-vpn-gateways 
-Example:
-New-AzVirtualNetworkGateway -Name $GWName1 -ResourceGroupName $RG1 -Location $Location1 -IpConfigurations $gw1ipconf1,$gw1ipconf2 -GatewayType Vpn -VpnType RouteBased -GatewaySku VpnGw1 -Asn $VNet1ASN -EnableActiveActiveFeature -Debug
-= $false  Active/Standby
-=$true Active/Active
 
-1 Azure VPN S2S in Active passive mode:
+https://learn.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-activeactive-rm-powershell#part-1---create-and-configure-active-active-vpn-gateways 
+
+Example:
+
+```
+New-AzVirtualNetworkGateway -Name $GWName1 -ResourceGroupName $RG1 -Location $Location1 -IpConfigurations $gw1ipconf1,$gw1ipconf2 -GatewayType Vpn -VpnType RouteBased -GatewaySku VpnGw1 -Asn $VNet1ASN -EnableActiveActiveFeature -Debug 
+```
+
+**EnableActiveActiveFeature** = $false --> Active/Standby
+**EnableActiveActiveFeature** = $true --> Active/Active
+
+### Azure VPN S2S in Active-Passive mode:
+
+![](Pics/2%20-%20AP.png)
  
-Characteristics:
-When working in Active/Standby mode, only a single VM instance of the VNG is effectively active.
+#### Characteristics:
+
+When working in Active/Passive mode, only a single VM instance of the VNG is effectively active.
 The second instance is ready to take over in case of issues with the first instance.
+
 These issues could be: 
 1.	Instance down / not operative due to issues
 2.	Planned maintenance events
-The failure in connectivity of an IPSEC tunnel does not represent a reason for failover.
-The instance which is considered active attempts connectivity to the remote endpoints according with the configured Connections 
-A single and unique Gateway public IP exists, which is associated with the instance considered active.
-In case of BGP connectivity, a single and unique BGP IP is configured on the VNG, which is associated again with the instance considered active.
 
-Failover events:
+<ins> The failure in connectivity of an IPSEC tunnel does not represent a reason for failover. </ins>
+
+The instance which is considered active attempts connectivity to the remote endpoints according with the configured Connections 
+
+**A single and unique Gateway public IP exists**, which is associated with the instance considered active.
+In case of BGP connectivity, **a single and unique BGP IP is configured on the VNG**, which is associated again with the instance considered active.
+
+#### Failover events:
  
 In case of failure or planned maintenance events, the VM instance which was standing by takes over from its peer, and becomes the new Active instance.
 The Gateway public IP is moved to the new active instance, so the VM is able to build IPSEC connectivity with remote peer.
@@ -73,16 +92,16 @@ During planned maintenance events, a process of Security Associations migration 
 During unplanned events the rebuild of IPSEC tunnel may take up to some minutes.
 In case of BGP routing, the new active instance keeps using the same BGP IP, so once again remote side will not be aware of any change.
 
-Pros
+#### Pros
 Simpler configuration, compared with Active/Active  we have to build a single link.
 No possibility of mistakes in terms of configuration: you can connect to a single VNG Public IP, and the BGP IP of the GW is persistent across instances.
 
-Cons
+#### Cons
 Performances are capped to the limits of a single VM instance.
 In case of unplanned failure, even with BGP, the rebuild of IPSEC tunnels may take up to minutes, hence possibility of longer outages.
 
 
-2 Azure VPN S2S in Active Active mode:
+### Azure VPN S2S in Active-Active mode:
  
  
 
