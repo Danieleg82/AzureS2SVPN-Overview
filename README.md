@@ -68,7 +68,7 @@ New-AzVirtualNetworkGateway -Name $GWName1 -ResourceGroupName $RG1 -Location $Lo
 
 ![](Pics/2%20-%20AP.png)
  
-#### Characteristics:
+**Characteristics**:
 
 When working in Active/Passive mode, only a single VM instance of the VNG is effectively active.
 The second instance is ready to take over in case of issues with the first instance.
@@ -84,21 +84,26 @@ The instance which is considered active attempts connectivity to the remote endp
 **A single and unique Gateway public IP exists**, which is associated with the instance considered active.
 In case of BGP connectivity, **a single and unique BGP IP is configured on the VNG**, which is associated again with the instance considered active.
 
-#### Failover events:
+**Failover events**:
 
 ![](Pics/3%20-%20AP%20failover.png)
 
 In case of failure or planned maintenance events, the VM instance which was standing by takes over from its peer, and becomes the new Active instance.
+
 The Gateway public IP is moved to the new active instance, so the VM is able to build IPSEC connectivity with remote peer.
+
 During planned maintenance events, a process of Security Associations migration takes place between the instance which is going to go standby and the new active instance: this way there will be no need to rebuild IPSEC tunnels, the move from one instance to the other will be transparent from the point of view of the remote endpoint.
+
 During unplanned events the rebuild of IPSEC tunnel may take up to some minutes.
 In case of BGP routing, the new active instance keeps using the same BGP IP, so once again remote side will not be aware of any change.
 
-#### Pros
-Simpler configuration, compared with Active/Active  we have to build a single link.
+**Pros**
+
+Simpler configuration, compared with Active/Active --> we have to build a single link.
 No possibility of mistakes in terms of configuration: you can connect to a single VNG Public IP, and the BGP IP of the GW is persistent across instances.
 
-#### Cons
+**Cons**
+
 Performances are capped to the limits of a single VM instance.
 In case of unplanned failure, even with BGP, the rebuild of IPSEC tunnels may take up to minutes, hence possibility of longer outages.
 
@@ -109,74 +114,89 @@ In case of unplanned failure, even with BGP, the rebuild of IPSEC tunnels may ta
  
 ![](Pics/5%20-%20A-A%20generic.png)
 
-Characteristics
+**Characteristics**
+
 When working in Active/Active mode, both the VM instances of a VNG are active, hence attempting to build IPSEC connectivity with the remote endpoints, again according with the Connections configured on the GW.
+
 Every VM Instance is associated with its own Public IP (we’ll hence have 2 IPs).
 Every VM Instance is associated with its own BGP IP (we’ll hence have 2 BGP IPs).
+
 Remote endpoints are supposed to create 2 links:
-•	One link between remote IP and VIP_0
-•	One link between remote IP and VIP_1
+-	One link between remote IP and VIP_0
+-	One link between remote IP and VIP_1
+  
 … and 2 BGP peerings:
-•	One peering between remote side’s BGP peer IP and the BGP IP of IN_0 (BGP_IP_0), on top of the IPSEC tunnel built with VIP_0
-•	One peering between remote side’s BGP peer IP and the BGP IP of IN_1 (BGP_IP_1), on top of the IPSEC tunnel built with VIP_1
+
+-	One peering between remote side’s BGP peer IP and the BGP IP of IN_0 (BGP_IP_0), on top of the IPSEC tunnel built with VIP_0
+-	One peering between remote side’s BGP peer IP and the BGP IP of IN_1 (BGP_IP_1), on top of the IPSEC tunnel built with VIP_1
+
 We can here split between different scenarios.
 
 
-2.1	Single link enabled, Static routing
-
+#### Single link enabled, Static routing
 
 ![](/Pics/6%20-%20AA%20single%20link.png)
  
 In this scenario customer decides to connect a single remote endpoint to a single VM instance of the VNG, in a scenario of Static routing
 You may ask: WHY?
+
 Some times, customer do not really have necessity to implement Active/Active solution for the additional complexity it introduces, but there are scenarios where a VNG has to be configured in Active/Active mode as mandatory step, like for example when leveraging Azure Route Server in the same HUB VNET to enable Branch2Branch transitivity in VPN + ExpressRoute coexistence.
+
 Some other times, we simply forget about configuring a second tunnel on our local terminator 😊
 
 
-
-Failover events:
+**Failover events**:
 
 ![](/Pics/7%20-%20AA%20single%20link%20failover.png)
  
 In case of failure, the “surviving” instance will start leveraging the Public IP of the “dead” instance to build IPSEC.
 The IPSEC will come up.
+
 During planned maintenance events, the Security Associations Migration takes place.
 During unplanned events the rebuild of IPSEC tunnel may take up to some minutes.
 
-Pros
+**Pros**
+
 No added value, same as Active/Standby 
 
-Cons
+**Cons**
+
 As per Active/Standby scenario.
  
 
 
-2.2	Single link enabled with BGP: DO NOT DO THIS!!
+#### Single link enabled with BGP: DO NOT DO THIS!!
 
 ![](/Pics/8%20-%20AA%20single%20link%20BGP.png)
  
 This represents the most dangerous condition for the reliability of your VPN connectivity with a VNG.
+
 The scenario is similar to previous one, with the difference that we enable BGP on top of the connection.
+
 Now, remember that in Active/Active scenario, any VM instance of the VNG has its own BGP IP.
+
 You connect your local terminator to a single instance of the GW and proceed with the BGP peering.
+
 You will soon notice that your VPN link will suffer of long downtimes, occurring any time planned maintenance is performed on the GW instances.
+
 Let’s see in detail why you should never do this.
 
 
-Failover events:
+**Failover events:**
 
 ![](/Pics/9%20-%20AA%20single%20link%20BGP%20failover.png)
  
 During failover, the connectivity of to the “surviving” instance is destined to fail.
 For basically 2 reasons:
+
 1.	Your local firewall is not programmed to build a tunnel with the public IP of the surviving instance, as per initial setup
 2.	Even if the public IP of the “dead” instance was swapped to “surviving” one (as it happens for the static routing scenarios) - and the IPSEC re-established - the BGP peering between your firewall and the “surviving” instance will fail, since your firewall just knows the BGP IP of the primary instance it was connected to, so it will try to reach a no-longer-existing BGP IP over an active IPSEC tunnel
 Due to that, every time Azure performed maintenance on VM instances, your connectivity would suffer downtime until the maintenance event is completed (and we’re talking potentially of 30mins or more).
 
-Pros
+**Pros**
 None
 
-Cons
+**Cons**
 Totally unreliable connectivity.
 
 2.3	Double link with static routing
