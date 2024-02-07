@@ -18,7 +18,7 @@
 
 [**MONITORING GATEWAY PERFORMANCES**](#monitoring-gw-performances)
 
-[**CONSIDERATIONS ABOUT FLOW SYMMETRY**](#considerations-about-flows-symmetry)
+[**CONSIDERATIONS ABOUT STATEFUL REMOTE APPLIANCES**](#considerations-about-stateful-remote-appliances)
 
 [**FLOW SYMMETRY SCENARIO**](#flow-symmetry-scenario)
 
@@ -399,7 +399,7 @@ Similar alerts, based on different metrics, can be used instead to assess connec
 &nbsp;  
 
 
-### Considerations about flows symmetry:
+### Considerations about stateful remote appliances:
 
 Can I use stateful devices to terminate IPSEC links with Azure VNG?
 Once more, the answer is different depending on the configuration we consider…
