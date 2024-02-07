@@ -1,4 +1,4 @@
-# Azure S2S VPN: Overview & comparison of most common settings
+# Azure S2S VPN: Overview / Configurations / Considerations
 
 [**INTRO**](#intro)
 
