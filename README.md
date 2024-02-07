@@ -2,21 +2,29 @@
 
 ## TABLE OF CONTENT
 
-[Intro](#intro)
+[INTRO](#intro)
 
-[AZURE VIRTUAL NETWORK GATEWAY INTRO](#deployment-and-preliminary-configurations)
+[AZURE VIRTUAL NETWORK GATEWAY INTRO](#azure-virtual-network-gateway-intro)
 
-[CHALLENGE 1: IDPS for unencrypted traffic](#challenge1--idps-for-unencrypted-traffic)
+[AZURE VPN S2S IN PASSIVE MODE](#azure-vpn-s2s-in-active-passive-mode)
 
-[CHALLENGE 2: TLS Inspection and IDPS on encrypted traffic](#challenge-2-tls-inspection-and-idps-on-encrypted-traffic)
+[AZURE VPN S2S IN ACTIVE/ACTIVE MODE](#azure-vpn-s2s-in-active-active-mode)
 
-[CHALLENGE 3 (Optional): Block specific Web Categories](#challenge-3-optional-block-specific-web-categories)
+- [SCENARIO 1: SINGLE LINK ENABLED - STATIC ROUTING](#scenario-1-single-link-enabled-static-routing)
+- [SCENARIO 2: SINGLE LINK ENABLED WITH BGP: DON'T DO THIS!!](#scenario-2-single-link-enabled-with-bgp-do-not-do-this)
+- [SCENARIO 3: DOUBLE LINK WITH STATIC ROUTING](#scenario-3-double-link-with-static-routing)
+- [SCENARIO 4: DOUBLE LINK WITH BGP](#scenario-4-double-link-with-bgp)
+- [SCENARIO 5: DOUBLE REMOTE ENDPOINT - 4X LINKS - STATIC/BGP](#scenario-5-double-remote-endpoint--4x-links--staticbgp)
 
-[CHALLENGE 4 (Optional): Block specific URL paths](#challenge-4-optional-block-specific-url-paths)
+[BANDWIDTH CONSIDERATIONS (PER TUNNEL / AGGREGATE)](#bandwidth-considerations-per-tunnel--aggregate)
 
-[CHALLENGE 5: Application Gateway & Azure Firewall chain with TLS inspection](#challenge-5-application-gateway--azure-firewall-chain-with-tls-inspection)
+[MONITORING GATEWAY PERFORMANCES](#monitoring-gw-performances)
 
-[Close out](#close-out)
+[CONSIDERATIONS ABOUT FLOW SYMMETRY](#considerations-about-flows-symmetry)
+
+[FLOW SYMMETRY SCENARIO](#flow-symmetry-scenario)
+
+[CONCLUSIONS](#conclusions)
 
 ## INTRO
 
@@ -412,7 +420,7 @@ Let’s see a couple of examples.
 
 &nbsp;  
 
-### FLOW SYMMETRY 
+### FLOW SYMMETRY SCENARIO
 
 In these cases we analyze what happens in a scenarios of:
 -	A/A VNG
@@ -422,7 +430,7 @@ In these cases we analyze what happens in a scenarios of:
 
 &nbsp;  
 
-#### TRAFFIC GENERATED FROM ONPREM TO AZURE
+**TRAFFIC GENERATED FROM ONPREM TO AZURE**
 
 **GO PATH:**
  
@@ -438,7 +446,7 @@ Any further packet relevant to such flow/connection, from Azure VM to Onprem, wi
 
 &nbsp;  
 
-#### TRAFFIC GENERATED FROM AZURE TO ONPREM
+**TRAFFIC GENERATED FROM AZURE TO ONPREM**
 
 **GO PATH:**
 
