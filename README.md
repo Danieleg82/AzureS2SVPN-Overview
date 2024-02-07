@@ -120,7 +120,7 @@ In case of failure or planned maintenance events, the VM instance which was stan
 
 The Gateway public IP is moved to the new active instance, so the VM is able to build IPSEC connectivity with remote peer.
 
-During planned maintenance events, a process of _Security Associations Migration_ takes place between the instance which is going to go standby and the new active instance: this way there will be no need to rebuild IPSEC tunnels, the move from one instance to the other will be transparent from the point of view of the remote endpoint.
+During planned maintenance events, the move from one instance to the "surviving" one will be transparent from the point of view of the remote endpoint.
 
 During unplanned events the rebuild of IPSEC tunnel may take up to some minutes.
 In case of BGP routing, the new active instance keeps using the same BGP IP, so once again remote side will not be aware of any change.
@@ -187,7 +187,7 @@ Some other times, we simply forget about configuring a second tunnel on our loca
 In case of failure, the “surviving” instance will start leveraging the Public IP of the “dead” instance to build IPSEC.
 The IPSEC will come up.
 
-During planned maintenance events, the _Security Associations Migration_ takes place.
+During planned maintenance events, IPSEC Security Associations failover smoothly.
 During unplanned events the rebuild of IPSEC tunnel may take up to some minutes.
 
 **Pros**
