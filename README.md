@@ -25,6 +25,7 @@ It still represents a very utilized service, simple and basilar but very common.
 Simple…but some times not so simple as it could seem 😊
 In this article I want to show you some aspects of the VNG which typically still create confusion in many users: we will talk about Active/Standby and Active/Active modes - what’s the real difference between those, the most common setups and challenges. 
 
+&nbsp;  
 
 ## INTRO OF AZURE VIRTUAL NETWORK GATEWAY
 
@@ -65,9 +66,7 @@ New-AzVirtualNetworkGateway -Name $GWName1 -ResourceGroupName $RG1 -Location $Lo
 **EnableActiveActiveFeature** = $true --> Active/Active
 
 
-
-
-
+&nbsp;  
 
 ### Azure VPN S2S in Active-Passive mode:
 
@@ -113,7 +112,7 @@ Performances are capped to the limits of a single VM instance.
 In case of unplanned failure, even with BGP, the rebuild of IPSEC tunnels may take up to minutes, hence possibility of longer outages.
 
 
-
+&nbsp;  
 
 
 ### Azure VPN S2S in Active-Active mode:
@@ -141,7 +140,7 @@ Remote endpoints are supposed to create 2 links:
 We can here split between different scenarios.
 
 
-
+&nbsp;  
 
 #### SCENARIO 1: Single link enabled, Static routing
 
@@ -174,7 +173,8 @@ No added value, same as Active/Standby
 As per Active/Standby scenario.
  
 
-
+&nbsp;  
+&nbsp;  
 
 
 
@@ -210,7 +210,8 @@ None
 **Cons**
 Totally unreliable connectivity.
 
-
+&nbsp;  
+&nbsp;  
 
 
 #### SCENARIO 3: Double link with static routing
@@ -237,7 +238,8 @@ Potentially double link capacity and no BGP complexity
 Remote VPN terminator could experience issues in case of failure of one of the IPSEC links to Azure, due to usage of static routes.
 
 
-
+&nbsp;  
+&nbsp;  
 
 #### SCENARIO 4: Double link with BGP
 
@@ -266,7 +268,8 @@ Possibility to tune links as active or standby via BGP configuration (useful in 
 
 None, a part for the complexity of double IPSEC link and BGP peering setup.
 
-
+&nbsp;  
+&nbsp;  
 
 #### SCENARIO 5: Double remote endpoint – 4x links – Static/BGP
 
@@ -315,7 +318,8 @@ Possibility to tune links as active or standby via BGP configuration (useful in 
 None, a part for the complexity of 4x IPSEC links and BGP peering setup.
 
 
-
+&nbsp;  
+&nbsp;  
 
 ### Bandwidth considerations (per-tunnel / aggregate)
 
@@ -337,7 +341,7 @@ As you can see, the performances of the single link are strictly correlated with
 The maximum throughput you could expect today on a single IPSEC link of Azure VNG – using GCMAES256 – is around 2.3Gbps, with a GW offering a maximum of 10Gbps aggregate capacity.
 
 
-
+&nbsp;  
 
 ### Monitoring GW performances
 
@@ -368,7 +372,7 @@ Similar alerts, based on different metrics, can be used instead to assess connec
 -	Tunnel MMSA count
 -	Tunnel QMSA count
 
-
+&nbsp;  
 
 
 ### Considerations about flows symmetry:
@@ -388,7 +392,7 @@ Once more, the answer is different depending on the configuration we consider…
 The reason why stateful appliances are not always supportable in any VNG scenario is due to the fact that flow symmetry cannot be granted in Azure.
 Let’s see a couple of examples.
 
-
+&nbsp;  
 
 ### FLOW SYMMETRY 
 
@@ -430,7 +434,7 @@ According with these considerations, it’s easy to understand why it’s common
 If a stateful device is mandatory, you can consider BGP and configure ASPath-prepending to make links passive and maintain the symmetry, scarifying a portion of the potential connection’s capacity.
 
 
-
+&nbsp;  
 
 ## CONCLUSIONS
 
