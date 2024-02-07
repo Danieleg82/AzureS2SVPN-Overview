@@ -1,30 +1,28 @@
 # Azure S2S VPN: Overview & comparison of most common settings
 
-## TABLE OF CONTENT
+[**INTRO**](#intro)
 
-[INTRO](#intro)
+[**AZURE VIRTUAL NETWORK GATEWAY INTRO**](#azure-virtual-network-gateway-intro)
 
-[AZURE VIRTUAL NETWORK GATEWAY INTRO](#azure-virtual-network-gateway-intro)
+[**AZURE VPN S2S IN PASSIVE MODE**](#azure-vpn-s2s-in-active-passive-mode)
 
-[AZURE VPN S2S IN PASSIVE MODE](#azure-vpn-s2s-in-active-passive-mode)
+[**AZURE VPN S2S IN ACTIVE/ACTIVE MODE**](#azure-vpn-s2s-in-active-active-mode)
 
-[AZURE VPN S2S IN ACTIVE/ACTIVE MODE](#azure-vpn-s2s-in-active-active-mode)
+- [**SCENARIO 1: SINGLE LINK ENABLED - STATIC ROUTING**](#scenario-1-single-link-enabled-static-routing)
+- [**SCENARIO 2: SINGLE LINK ENABLED WITH BGP: DON'T DO THIS!!**](#scenario-2-single-link-enabled-with-bgp-do-not-do-this)
+- [**SCENARIO 3: DOUBLE LINK WITH STATIC ROUTING**](#scenario-3-double-link-with-static-routing)
+- [**SCENARIO 4: DOUBLE LINK WITH BGP**](#scenario-4-double-link-with-bgp)
+- [**SCENARIO 5: DOUBLE REMOTE ENDPOINT - 4X LINKS - STATIC/BGP**](#scenario-5-double-remote-endpoint--4x-links--staticbgp)
 
-- [SCENARIO 1: SINGLE LINK ENABLED - STATIC ROUTING](#scenario-1-single-link-enabled-static-routing)
-- [SCENARIO 2: SINGLE LINK ENABLED WITH BGP: DON'T DO THIS!!](#scenario-2-single-link-enabled-with-bgp-do-not-do-this)
-- [SCENARIO 3: DOUBLE LINK WITH STATIC ROUTING](#scenario-3-double-link-with-static-routing)
-- [SCENARIO 4: DOUBLE LINK WITH BGP](#scenario-4-double-link-with-bgp)
-- [SCENARIO 5: DOUBLE REMOTE ENDPOINT - 4X LINKS - STATIC/BGP](#scenario-5-double-remote-endpoint--4x-links--staticbgp)
+[**BANDWIDTH CONSIDERATIONS (PER TUNNEL / AGGREGATE)**](#bandwidth-considerations-per-tunnel--aggregate)
 
-[BANDWIDTH CONSIDERATIONS (PER TUNNEL / AGGREGATE)](#bandwidth-considerations-per-tunnel--aggregate)
+[**MONITORING GATEWAY PERFORMANCES**](#monitoring-gw-performances)
 
-[MONITORING GATEWAY PERFORMANCES](#monitoring-gw-performances)
+[**CONSIDERATIONS ABOUT FLOW SYMMETRY**](#considerations-about-flows-symmetry)
 
-[CONSIDERATIONS ABOUT FLOW SYMMETRY](#considerations-about-flows-symmetry)
+[**FLOW SYMMETRY SCENARIO**](#flow-symmetry-scenario)
 
-[FLOW SYMMETRY SCENARIO](#flow-symmetry-scenario)
-
-[CONCLUSIONS](#conclusions)
+[**CONCLUSIONS**](#conclusions)
 
 ## INTRO
 
