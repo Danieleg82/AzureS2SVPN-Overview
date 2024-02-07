@@ -4,7 +4,7 @@
 
 [**AZURE VIRTUAL NETWORK GATEWAY INTRO**](#azure-virtual-network-gateway-intro)
 
-[**AZURE VPN S2S IN PASSIVE MODE**](#azure-vpn-s2s-in-active-passive-mode)
+[**AZURE VPN S2S IN ACTIVE/PASSIVE MODE**](#azure-vpn-s2s-in-active-passive-mode)
 
 [**AZURE VPN S2S IN ACTIVE/ACTIVE MODE**](#azure-vpn-s2s-in-active-active-mode)
 
