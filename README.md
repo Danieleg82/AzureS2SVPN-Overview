@@ -1,5 +1,23 @@
 # Azure S2S VPN: Overview & comparison of most common settings
 
+## TABLE OF CONTENT
+
+[Intro](#intro)
+
+[AZURE VIRTUAL NETWORK GATEWAY INTRO](#deployment-and-preliminary-configurations)
+
+[CHALLENGE 1: IDPS for unencrypted traffic](#challenge1--idps-for-unencrypted-traffic)
+
+[CHALLENGE 2: TLS Inspection and IDPS on encrypted traffic](#challenge-2-tls-inspection-and-idps-on-encrypted-traffic)
+
+[CHALLENGE 3 (Optional): Block specific Web Categories](#challenge-3-optional-block-specific-web-categories)
+
+[CHALLENGE 4 (Optional): Block specific URL paths](#challenge-4-optional-block-specific-url-paths)
+
+[CHALLENGE 5: Application Gateway & Azure Firewall chain with TLS inspection](#challenge-5-application-gateway--azure-firewall-chain-with-tls-inspection)
+
+[Close out](#close-out)
+
 ## INTRO
 
 Does it still make sense to speak about classic VPN solutions in 2024, when it comes to connectivity to cloud?
@@ -27,7 +45,7 @@ In this article I want to show you some aspects of the VNG which typically still
 
 &nbsp;  
 
-## INTRO OF AZURE VIRTUAL NETWORK GATEWAY
+## AZURE VIRTUAL NETWORK GATEWAY INTRO
 
 Every VNG in Azure is a logical object composed by 2 underlying **instances**.
 
