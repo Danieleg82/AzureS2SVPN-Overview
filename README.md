@@ -478,6 +478,8 @@ Site-2-Site VPN solutions are still a very largely utilized instrument adopted t
 
 The Azure Virtual Network Gateway represents the 1st party, integrated, recommended solution to build IPSEC tunnels to Azure infrastructure.
 
-Azure VNG in Active/Active mode, represents the most reliable and best-performing setup available, with just some special care to be taken when assessing the usage of stateful remote terminators
+Azure VNG in Active/Active mode, represents the most reliable and best-performing setup available, but we must pay attention at how we configure our IPSEC links, making sure we're applying the best performing and most reliable solution.
+
+Keeping under control the performances of our VNG is imperative to avoid bad surprises, and Azure offers a good set of instruments for that, based on Azure Monitor.
 
 
