@@ -184,11 +184,14 @@ Some other times, we simply forget about configuring a second tunnel on our loca
 
 ![](/Pics/7%20-%20AA%20single%20link%20failover.png)
  
-In case of failure, the “surviving” instance will start leveraging the Public IP of the “dead” instance to build IPSEC.
+In case of failure, the “surviving” instance will start leveraging the Public IP of the “dead” instance to build IPSEC. *
+
 The IPSEC will come up.
 
 During planned maintenance events, IPSEC Security Associations failover smoothly.
 During unplanned events the rebuild of IPSEC tunnel may take up to some minutes.
+
+* **IMPORTANT NOTE: This is NOT valid when leveraging connectivity to the <ins>VNG's Private IP</ins>. When using such approach, the IP will not swap, and the connectivity will be lost!**
 
 **Pros**
 
@@ -196,7 +199,7 @@ No added value, same as Active/Standby
 
 **Cons**
 
-As per Active/Standby scenario.
+As per Active/Standby scenario + disconnection and lack of service in case of failover/maintenance
  
 
 &nbsp;  
